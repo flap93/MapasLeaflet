@@ -10,6 +10,24 @@
   <!-- Make sure you put this AFTER Leaflet's CSS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- este link nos permite utilizar clustering que sirve para generar una
+  gran cantidad de marcadores en nuestro mapa.
+  para ellos podemos agrupar marcadores en clusters -->
+
+  <!--  QUE ES EL CLUSTERING
+  
+En el contexto de la visualización de mapas, los clusters o agrupaciones de marcadores son una forma de manejar grandes cantidades de puntos o marcadores en un mapa sin sobrecargar la vista visual o el rendimiento del navegador. Cuando tienes muchos marcadores en un mapa, especialmente si están geográficamente cerca unos de otros, puede resultar difícil interactuar con el mapa y también puede ralentizar significativamente la carga y la respuesta del mapa debido a la gran cantidad de elementos que se deben renderizar y gestionar.
+
+¿Cómo funcionan los clusters?
+El clustering de marcadores implica agrupar geográficamente varios marcadores en un único marcador de cluster cuando se visualizan a un nivel de zoom bajo. Esto significa que en lugar de mostrar cada marcador individualmente, se muestra un marcador agrupado que indica la cantidad de marcadores que representa. A medida que aumentas el nivel de zoom (es decir, acercas la vista), los clusters se descomponen en clusters más pequeños o en marcadores individuales, dependiendo de la proximidad de los marcadores entre sí y del nivel de zoom alcanzado.
+
+Beneficios de usar clustering:
+Mejora del Rendimiento: Reduce la carga computacional en el navegador al disminuir el número de marcadores que deben ser procesados y renderizados.
+Mejora de la Usabilidad: Hace que los mapas sean más fáciles de leer y navegar, especialmente cuando se manejan grandes conjuntos de datos.
+Visualización Atractiva: Proporciona una presentación más limpia y organizada de los datos, que puede ser esencial para aplicaciones como la visualización de datos en tiempo real o mapas interactivos para análisis geográficos. -->
+  <link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+  <script type="text/javascript" src="node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+
 
 
   <style>
@@ -22,12 +40,85 @@
 
 <body>
   <h1>Leaflet.js Demo</h1>
-
-
   <div id="map"></div>
-  <script></script>
+  <!-- <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  <script type="text/javascript" src="node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script> -->
+  <script>
+    // muestra la vita desde donde empieza
+    var demoMap = L.map('map').setView([40.453191, -3.509236], 6);
+    // carga la vista del mapa
+    var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib = 'Map data © OpenStreetMap contributors';
+    var osm = new L.TileLayer(osmUrl, {
+      minZoom: 5,
+      maxZoom: 16,
+      attribution: osmAttrib,
+      updateWhenIdle: true,
+      reuseTiles: true
+    }).addTo(demoMap);
 
-  <a href="/mapa1.html" style="font-size: 30PX; ">Regresar al mapa 1 </a>
+    var markerCluster = L.markerClusterGroup();
+
+    //var location = [39.190878, -5.7806939999999996];
+
+    //var marker = L.marker([39.190878, -5.7806939999999996]).addTo(demoMap);
+    //console.log(marker);
+    // en la libreria de leaflet tenemos varios 
+    // metodos uno de ellos es .getLatLng() que nos permite obtener
+    // la latitud y longitud 
+    //var latlng = marker.getLatLng();
+
+
+    // ANADE UN MARCADOR INDIVIDUAL 
+    //marker.bindPopup('Latitud: ' + latlng.lat + ' Longitud: ' + latlng.lng);
+
+
+
+
+    //************************ FUNCION AGREGAR VARIOS MARCADORES Y AGRUPARLOS CON EL CLUSTER ******************************
+    var markerCluster = L.markerClusterGroup();
+
+    demoMap.on('click', function (e) {
+      var latlng = e.latlng;
+      var marker = L.marker([latlng.lat, latlng.lng]).bindPopup('Nuevo marcador en: ' + latlng.lat + ', ' + latlng.lng);
+      markerCluster.addLayer(marker); // Agregar el marcador al cluster
+    });
+
+    demoMap.addLayer(markerCluster); // Agregar el cluster al mapa
+
+
+
+    //  OPTIZIMATION
+    // pero se anadaria al primcipio  al establecer la vista
+
+    // En el caso de que necesitemos una mayor fluidez para nuestro mapa (por ejemplo, si es una aplicación web que va a ejecutarse en smartphones con algún año a sus espaldas…), podemos mejorar la experiencia de usuario desactivando las animaciones. Para ello podemos pasarle un objeto con opciones a la llamada de creación del mapa:
+
+    // var demoMap = L.map('map', {
+    //   fadeAnimation: false,
+    //   zoomAnimation: false,
+    //   markerZoomAnimation: false
+    // }).setView([40.453191, -3.509236], 6);
+
+    // esto de los tiles si se lo anadi los dos ultimos atributos
+    // updateWhenIdle: true,
+    //     reuseTiles: true
+
+    // También podemos indicarle al «TileLayer» que reutilice tiles, de forma que no tenga que crear nuevos objetos y reservar memoria por cada tile creado, y que se actualice cuando esté en estado «idle» para evitar que se congele la pantalla mientras carga.
+
+
+
+    // var osm = new L.TileLayer(osmUrl, {
+    //     minZoom: 5, maxZoom: 16,
+    //     attribution: osmAttrib,
+    //     updateWhenIdle: true,
+    //     reuseTiles: true
+    // });
+
+
+  </script>
+
+  <a href="/mapa1.html" style="font-size: 30PX; ">ir al mapa 1 </a>
 </body>
+
 
 </html>
